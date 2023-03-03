@@ -57,3 +57,18 @@ Contrairement à la procédure 5., la 6. nous demande de créer un Dockerfile et
 La procédure 5. est plus accéssble mais ne nous laisse pas la possibilité de surcharger une image facilement.
 La procédure 6. demande un peu plus d'éffort mais nous permet de surcharger une image de base à souhait.
 ```
+
+- Récupérer les images mysql:5.7 et phpmyadmin/phpmyadmin depuis le Docker Hub
+```bash
+docker pull mysql:5.7
+docker pull  phpmyadmin/phpmyadmin
+```
+
+- Exécuter deux conteneurs à partir des images
+```bash
+docker run --name mysql -e MYSQL_ROOT_PASSWORD=secret -d mysql:5.7
+docker run --name phpmyadmin -d --link mysql:db -p 8080:80 phpmyadmin/phpmyadmin
+```
+
+- Ajouter une table ainsi que quelques enregistrements dans la base de données à l’aide de phpmyadmin
+![alt text](./db-create-insert.jpg)
