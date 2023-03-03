@@ -145,5 +145,5 @@ services:
 ```bash
 docker compose up
 ```
-
+![alt text](./db-initdb-execute.jpg)
 ![alt text](./db-initdb.jpg)
