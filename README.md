@@ -1,5 +1,5 @@
 - Récupérer l’image sur le Docker Hub
-``
+```bash
 docker pull nginx
 ```
 
