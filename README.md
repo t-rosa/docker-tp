@@ -72,3 +72,78 @@ docker run --name phpmyadmin -d --link mysql:db -p 8080:80 phpmyadmin/phpmyadmin
 
 - Ajouter une table ainsi que quelques enregistrements dans la base de données à l’aide de phpmyadmin
 ![alt text](./db-create-insert.jpg)
+
+- Faire la même chose que précédemment en utilisant un fichier docker-compose.yml
+```bash
+touch docker-compose.yml
+```
+```yaml
+services:
+  db:
+    container_name: mysql
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+    volumes:
+      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    ports:
+      - 8080:80
+```
+
+- Qu’apporte le fichier docker-compose par rapport aux commandes docker run ?  Pourquoi est-il intéressant ?
+```
+Le fichier docker-compose permet de créer une configuration pour plusieurs conteneurs, tandis que la commande docker run n'est destiné qu'à démarrer un seul conteneur.
+
+Le fichier docker-compose permet aussi d'abstraire toute la configuration spécifique au conteneur, par exemple, je peux spécifier le mapping de ports, volumes, nom, image, liens, etc.
+
+De se fait, au lieu de devoir taper plusieurs commande docker run avec tous les arguments nécéssaire, je peux, grâce au docker-compose, uniquement taper la commande "docker compose up".
+
+Il est donc très intérréssant d'utiliser un docker-compose pour simplifier et harmoniser le workflow de démarrage de conteneur(s) docker.
+```
+
+- Quel moyen permet de configurer (premier utilisateur, première base de données, mot de passe root, …) facilement le conteneur mysql au lancement ?
+```
+Lorsqu'un conteneur mysql est démarré pour la première fois, il exécutera les fichiers avec les extensions .sh, .sql et .sql.gz qui se trouvent dans /docker-entrypoint-initdb.d. Donc je peux monter un volume qui va binder un fichier .sql au dossier qui fait office d'entrypoint. Si le conteneur à déja était initialisé, alors le script ne va pas s'exécuter.
+```
+```bash
+touch initdb.sql
+```
+```sql
+CREATE DATABASE test;
+USE test;
+
+CREATE TABLE Test (nom varchar(255));
+
+INSERT INTO Test (nom) VALUES ('test-1');
+INSERT INTO Test (nom) VALUES ('test-2');
+INSERT INTO Test (nom) VALUES ('test-3');
+```
+```yaml
+services:
+  db:
+    container_name: mysql
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+    volumes:
+      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    ports:
+      - 8080:80
+```
+```bash
+docker compose up
+```
+
+![alt text](./db-initdb.jpg)
