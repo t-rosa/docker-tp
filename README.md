@@ -84,8 +84,6 @@ services:
     image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: secret
-    volumes:
-      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
 
   phpmyadmin:
     container_name: phpmyadmin
